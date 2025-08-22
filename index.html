@@ -89,7 +89,7 @@
     padding: 20px;
     text-align: center;
   }
-  .service-item h3 {
+  .service-item h3, .service-item h2 {
     color: #3cb371;
     margin-bottom: 10px;
   }
@@ -205,6 +205,42 @@
     cursor: pointer;
     z-index: 1000;
   }
+  /* Education updates */
+  .education-updates {
+    background: #f9f9f9;
+    padding: 40px 20px;
+    text-align: center;
+    margin: 40px 0;
+    border-radius: 10px;
+  }
+  .education-updates h2 {
+    color: #2e7d32;
+    margin-bottom: 20px;
+    font-size: 2em;
+  }
+  #feed {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  #feed .item {
+    border-bottom: 1px solid #ddd;
+    padding: 15px 0;
+  }
+  #feed .title {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #007bff;
+    text-decoration: none;
+  }
+  #feed .title:hover {
+    text-decoration: underline;
+  }
+  #feed .pubDate {
+    font-size: 0.9em;
+    color: gray;
+    margin-top: 5px;
+  }
 </style>
 </head>
 <body>
@@ -219,7 +255,7 @@
     <a href="#cbt">CBT Simulator</a>
     <a href="#contact">Contact</a>
     <a href="#location">Locate us</a>
-    <a href="#download App">Download App</a>
+    <a href="#download-App">Download App</a>
   </nav>
 </header>
 
@@ -324,6 +360,11 @@
   <a class="button" href="https://www.dropbox.com/scl/fi/mmavwavmyg4kuc3uzy209/_Flexi_Tutors_19009924.apk?rlkey=y2rouc1j8t9xa5rz8t1lre0e2&st=ntnd6hny&dl=0">Download App</a>
 </div>
 
+<section id="education-updates" class="education-updates">
+  <h2>📢 Latest Education Updates</h2>
+  <div id="feed"></div>
+</section>
+
 <section class="contact-section" id="contact">
   <h2>Contact Us</h2>
   <form action="https://formsubmit.co/flexitutors2000@gmail.com" method="POST">
@@ -374,6 +415,43 @@
       faq.classList.toggle('open');
     });
   });
+
+  const feedUrl ="https://api.rss2json.com/v1/api.json?rss_url=https://rss.app/feeds/EbQFInAV6zTvXvgD.xml";
+
+
+  function loadEducationUpdates() {
+    fetch(feedUrl)
+      .then(response => response.json())
+      .then(data => {
+        const feedContainer = document.getElementById("feed");
+        feedContainer.innerHTML = "";
+
+        if (!data.items || data.items.length === 0) {
+          feedContainer.innerText = "No updates available right now.";
+          return;
+        }
+
+        data.items.slice(0, 5).forEach(item => {
+          const itemDiv = document.createElement("div");
+          itemDiv.classList.add("item");
+
+          itemDiv.innerHTML = `
+            <a href="${item.link}" target="_blank" class="title">${item.title}</a>
+            <div class="pubDate">${new Date(item.pubDate).toLocaleDateString()}</div>
+          `;
+
+          feedContainer.appendChild(itemDiv);
+        });
+      })
+      .catch(error => {
+        document.getElementById("feed").innerText = "Failed to load education updates.";
+        console.error("Error loading feed:", error);
+      });
+  }
+
+  loadEducationUpdates();
+  setInterval(loadEducationUpdates, 300000);
+</script>
 </script>
 
 </body>
